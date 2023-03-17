@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"reflect"
 )
 
 type ExprC interface{}
@@ -62,25 +63,33 @@ type Binding struct {
 	Val  Value
 }
 
-func getBinop(op string, l int, r int) (interface{}, error) {
+
+type PrimV struct {
+    f func(Value, Value) Value
+}
+
+
+
+
+func getBinop(op string, l int, r int) (interface{}) {
 	switch op {
 	case "equal?":
-		return l == r, nil
+		return l == r
 	case "+":
-		return l + r, nil
+		return l + r
 	case "-":
-		return l - r, nil
+		return l - r
 	case "*":
-		return l * r, nil
+		return l * r
 	case "/":
 		if r == 0 {
-			return nil, errors.New("division by zero")
+			return errors.New("division by zero")
 		}
-		return l / r, nil
+		return l / r
 	case "<=":
-		return l <= r, nil
+		return l <= r
 	default:
-		return nil, errors.New("invalid binop syntax")
+		return errors.New("invalid binop syntax")
 	}
 }
 
@@ -130,11 +139,12 @@ func interp(e ExprC, env []Binding) Value {
 			fArgs[i] = interp(arg, env)
 		}
 		switch fd := fd.(type) {
-		case func(Value, Value) Value:
+		case func(int, int) int:
 			if len(fArgs) != 2 {
 				panic("invalid number of arguments")
 			}
-			return fd(fArgs[0], fArgs[1])
+            return NumV{N : 2}
+			//return fd(fArgs[0].N, fArgs[1].N)
 		case ClosV:
 			fEnv := getEnv(fd.Args, fArgs, fd.Env)
 			return interp(fd.Body, fEnv)
@@ -148,19 +158,34 @@ func interp(e ExprC, env []Binding) Value {
 
 
 
+
+
+
+
+
+
+
+
+
 func main() {
 	fmt.Println("hello world")
     //testExprC := AppC{Fun: IdC{S: "+"}, Args: []ExprC{NumC{N: 3}, NumC{N: 4}}}
-    /*
+    
     topEnv := []Binding{
        
-        Binding{Name: "+", Val: createPrimFunc("+")},
-        Binding{Name: "/", Val: createPrimFunc("/")},
-        Binding{Name: "*", Val: createPrimFunc("*")},
-        Binding{Name: "-", Val: createPrimFunc("-")},
+        Binding{Name: "+", Val: "+"},
+       
   
     }
-    */
+    
     fmt.Println(interp(NumC{N : 2}, []Binding{}))
     fmt.Println(NumV{N : 2})
-}
+   
+    //testExprC := AppC{Fun: IdC{S: "+"}, Args: []ExprC{NumC{N: 3}, NumC{N: 4}}}
+    //fmt.Println(interp(testExprC, topEnv))
+    a := (interp(IdC{S: "+"}, topEnv))
+    fmt.Println(reflect.TypeOf(a))
+    fmt.Println(interp(IdC{S : "+"}, topEnv))
+   
+
+}   

@@ -8,8 +8,8 @@ import (
 
 func TestInterpNum(t *testing.T) {
 	
-	result := interp(NumC{N : 2}, []Binding{})
-	if (result != NumV{N : 2}){
+	result := interp(numC{n : 2}, []Binding{})
+	if (result != numV{n : 2}){
 		t.Errorf("Expected NumV(2)")
 	}
 

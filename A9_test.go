@@ -2,6 +2,7 @@ package main
 
 import (
 	"testing"
+	"reflect"
 )
 
 /*
@@ -41,4 +42,12 @@ func TestInterpString(t *testing.T) {
 
 }
 
+func TestLamC(t *testing.T){
 
+	result := interp(LamC{Args : []string{"x"}, Body : AppC{Fun: IdC{S: "+"}, Args: []ExprC{IdC{S: "x"}, NumC{N: 4}}}}, []Binding{})
+	//if (result != ClosV{Args : []string{"x"}, Body : AppC{Fun: IdC{S: "+"}, Args: []ExprC{IdC{S: "x"}, NumC{N: 4}}}, Env : []Binding{}}){
+	if !reflect.DeepEqual(result, ClosV{Args : []string{"x"}, Body : AppC{Fun: IdC{S: "+"}, Args: []ExprC{IdC{S: "x"}, NumC{N: 4}}}, Env : []Binding{}}){
+	
+		t.Error("LamC error")
+	}
+}
